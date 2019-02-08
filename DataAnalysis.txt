@@ -1,0 +1,57 @@
+ Question 1
+For this task we have unlabelled data we want to classify. I don't know how to
+nd out if the data belong to a country that is missing from our database (like
+Uruguay). So I decided to use the K-Means algorithm, to nd if the data belongs
+to a country that is logged. To do so, I rst nd the number of country in the
+json le to determine the number of clusters. There are 7 labels, 6 countries
+(DE, FR, IT, US, UK, ES) and ''. Then we preprocess the data, I use the get
+dummies fct to convert categorical variables into dummy/indicator variables.
+In our case the countries are the categorical variables. Since our variables are of
+incomparable units, we should standardize variables. Then I tried the K-Means
+algorithm with 7 clusters to be sure that the missing value is for one country.
+I found that the missing data belong to the same cluster. Once I have done
+that, I tried with 6 cluster to see if the missing data belong to a country in the
+database. At the end we have 'FR 'and ''sharing the same cluster.
+
+ Question 2
+I decided to use an NLP approach to this problem, a Sentence similarity pre-
+diction. I choose to implement a word2vec solution. The idea is, looking at the
+list of the previous cities for each session as one sentence, try to predict what
+will be the next city for this traveller. the most similar method computes cosine
+similarity between a simple mean of the projection weight vectors of the given
+words and the vectors for each word in the model. The method corresponds to
+the word analogy and distance scripts in the original word2vec implementation
+One could also use a more clasical path like computing Tf Idf for each session
+and then using cosine similarity between the query and each sentence of the
+database.
+
+ Question 3
+Joining data and country should be useful because they characterize the way
+each user search for a city. Before using them we maybe need to work on them,
+creating new input features for the model. For exemple not using directly the
+date but transforming into int, just using the month or the season. We can
+check for periods like summer holidays, christmas holidays.
+For me the 2 methods are complementary. We could rst lter by season and
+counrty the data and then apply NLP method.
+2
+5 Question 4
+Since we do not have a huge data set, I did a k fold cross-validation with k =
+4, the original database is randomly partitioned into k equal size subsamples.
+Of the k subsamples, a single subsample is retained as the validation data for
+testing the model, and the remaining k-1 subsamples are used as training data.
+The advantage of this method over repeated random sub-sampling is that all
+observations are used for both training and validation. From the single subsam-
+ble, we divide each item into 2 lists: Test set and its associated label. From
+each item take one city as label (the last one for example), and the others form
+the query. The goal is using the remaining cities try to predict the label. We
+give the model a list of city, and the model returns a city or a list of cities (top 3
+most similar for example). We want to know if the label is in the top 3 predicted
+by the model. If yes, we count +1, otherwise +0. Then we divide the result by
+the lenght of the testing set. Looking at the top 3 is an arbitrary decision, we
+could have chosen top 1 or top 5. But since we do not have a huge database I
+decided to look at the top 3.
+What is your condence that the measured score is accurate?
+If we look at the top one, the mesured score is not accurate. But if we look at
+the top 3, we know with 80% condence that each tuple of 3 cities contains the
+most relevant next city for a query.
+3
